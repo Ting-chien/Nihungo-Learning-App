@@ -2,8 +2,8 @@ import { useRef, useEffect } from 'react'
 import { useGojuuonQuiz } from '../hooks/useGojuuonQuiz'
 
 const QuizPage = () => {
-  const { state, start, setInput, submit, next, reset, QUESTION_COUNT } = useGojuuonQuiz()
-  const { status, questions, currentIndex, input, lastResult, score } = state
+  const { state, start, setInput, submit, next, finish, reset, QUESTION_COUNT, TIMER_SECONDS } = useGojuuonQuiz()
+  const { status, questions, currentIndex, input, lastResult, timedOut, score, timeLeft } = state
   const inputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
@@ -17,6 +17,8 @@ const QuizPage = () => {
     }
   }
 
+  const isUrgent = status === 'answering' && timeLeft <= 3
+
   return (
     <div
       className="flex items-center justify-center px-4"
@@ -25,7 +27,7 @@ const QuizPage = () => {
       {status === 'idle' && (
         <div className="flex flex-col items-center gap-6">
           <h2 className="text-2xl font-bold text-foreground">五十音 小測驗</h2>
-          <p className="text-muted-foreground text-sm">共 {QUESTION_COUNT} 題，請輸入假名對應的羅馬字</p>
+          <p className="text-muted-foreground text-sm">共 {QUESTION_COUNT} 題，每題限時 {TIMER_SECONDS} 秒</p>
           <button
             onClick={start}
             className="px-8 py-3 bg-primary text-primary-foreground rounded-md text-lg font-medium hover:opacity-80 transition-opacity"
@@ -36,12 +38,21 @@ const QuizPage = () => {
       )}
 
       {(status === 'answering' || status === 'feedback') && (
-        <div className="flex flex-col items-center gap-8 w-full max-w-sm">
-          <p className="text-sm text-muted-foreground">
-            第 {currentIndex + 1} / {QUESTION_COUNT} 題
-          </p>
+        <div className="flex flex-col items-center gap-6 sm:gap-8 w-full max-w-sm">
+          {/* Progress + timer row */}
+          <div className="w-full flex items-center justify-between">
+            <p className="text-sm text-muted-foreground">
+              第 {currentIndex + 1} / {QUESTION_COUNT} 題
+            </p>
+            <p
+              className="text-sm font-semibold tabular-nums transition-colors"
+              style={isUrgent ? { color: 'hsl(0 72% 51%)' } : undefined}
+            >
+              {status === 'answering' ? `${timeLeft} 秒` : '—'}
+            </p>
+          </div>
 
-          <span className="text-8xl font-medium text-foreground">
+          <span className="text-6xl sm:text-8xl font-medium text-foreground">
             {questions[currentIndex].kana}
           </span>
 
@@ -70,7 +81,16 @@ const QuizPage = () => {
 
           {status === 'feedback' && (
             <div className="flex flex-col items-center gap-4 w-full">
-              {lastResult ? (
+              {timedOut ? (
+                <div className="flex flex-col items-center gap-1">
+                  <p className="text-lg font-semibold" style={{ color: 'hsl(0 72% 51%)' }}>
+                    時間到！
+                  </p>
+                  <p className="text-sm text-muted-foreground">
+                    正確答案：<span className="font-medium text-foreground">{questions[currentIndex].romaji}</span>
+                  </p>
+                </div>
+              ) : lastResult ? (
                 <p className="text-lg font-semibold" style={{ color: 'hsl(142 71% 45%)' }}>
                   正確！
                 </p>
@@ -93,6 +113,14 @@ const QuizPage = () => {
               </button>
             </div>
           )}
+
+          {/* End quiz button */}
+          <button
+            onClick={finish}
+            className="text-xs text-muted-foreground hover:text-foreground transition-colors"
+          >
+            結束測驗
+          </button>
         </div>
       )}
 
