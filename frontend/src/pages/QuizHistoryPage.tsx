@@ -19,9 +19,11 @@ interface SessionListProps {
   sessions: QuizSessionSummary[]
   selectedId: number | null
   onSelect: (id: number) => void
+  detail: QuizSessionDetail | null
+  detailLoading: boolean
 }
 
-const SessionList = ({ sessions, selectedId, onSelect }: SessionListProps) => {
+const SessionList = ({ sessions, selectedId, onSelect, detail, detailLoading }: SessionListProps) => {
   if (sessions.length === 0) {
     return (
       <p className="text-sm text-muted-foreground px-1">還沒有測驗紀錄，快去做第一次測驗吧！</p>
@@ -62,6 +64,17 @@ const SessionList = ({ sessions, selectedId, onSelect }: SessionListProps) => {
                 {fmt(s.taken_at)}
               </p>
             </button>
+
+            {/* Mobile inline detail — hidden on sm+ where the right panel takes over */}
+            {isSelected && (
+              <div className="sm:hidden mt-1 border border-border rounded-md p-4">
+                {detailLoading ? (
+                  <p className="text-sm text-muted-foreground">載入中…</p>
+                ) : detail ? (
+                  <SessionDetail detail={detail} />
+                ) : null}
+              </div>
+            )}
           </li>
         )
       })}
@@ -137,6 +150,12 @@ const QuizHistoryPage = () => {
   }, [])
 
   const handleSelect = (id: number) => {
+    // Toggle collapse on mobile (and desktop) when the same row is tapped again
+    if (selectedId === id) {
+      setSelectedId(null)
+      setDetail(null)
+      return
+    }
     setSelectedId(id)
     setDetailLoading(true)
     setDetail(null)
@@ -169,12 +188,14 @@ const QuizHistoryPage = () => {
                   sessions={sessions}
                   selectedId={selectedId}
                   onSelect={handleSelect}
+                  detail={detail}
+                  detailLoading={detailLoading}
                 />
               </div>
 
-              {/* Right column — only visible once a row is selected */}
+              {/* Right column — desktop only; mobile uses inline expansion inside SessionList */}
               {(selectedId !== null) && (
-                <div className="flex-1 border border-border rounded-md p-4">
+                <div className="hidden sm:block flex-1 border border-border rounded-md p-4">
                   {detailLoading ? (
                     <p className="text-sm text-muted-foreground">載入中…</p>
                   ) : detail ? (
