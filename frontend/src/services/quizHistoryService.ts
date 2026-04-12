@@ -5,7 +5,7 @@ import type {
   QuizSessionSummary,
 } from '../types/quizHistory'
 
-const BASE_URL = 'http://localhost:8000/api/v1/quiz-history'
+const BASE_URL = '/api/v1/quiz-history'
 
 export const quizHistoryService = {
   saveSession: async (payload: QuizSessionCreate): Promise<QuizSessionSummary> => {
