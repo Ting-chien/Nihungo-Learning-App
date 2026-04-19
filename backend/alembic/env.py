@@ -14,6 +14,7 @@ from app.core.database import Base
 
 # Import models so Alembic can detect them for autogenerate
 import app.models.quiz_history  # noqa: F401
+import app.models.vocabulary  # noqa: F401
 
 config = context.config
 

@@ -14,6 +14,7 @@ const NavBar = () => {
   const menuRef = useRef<HTMLDivElement>(null)
 
   const isGojuuonActive = pathname.startsWith('/gojuuon')
+  const isVocabularyActive = pathname.startsWith('/vocabulary')
 
   // Close desktop dropdown when clicking outside
   useEffect(() => {
@@ -40,6 +41,17 @@ const NavBar = () => {
 
         {/* Desktop nav */}
         <nav className="hidden sm:flex items-center gap-1">
+          <Link
+            to="/vocabulary"
+            className={`px-1 py-1 text-sm font-medium transition-colors ${
+              isVocabularyActive
+                ? 'text-foreground'
+                : 'text-muted-foreground hover:text-foreground'
+            }`}
+          >
+            單詞
+          </Link>
+
           <div ref={menuRef} className="relative">
             <button
               onClick={() => setDropdownOpen((v) => !v)}
@@ -105,6 +117,17 @@ const NavBar = () => {
       {/* Mobile menu */}
       {mobileOpen && (
         <div className="sm:hidden border-t border-border bg-background px-4 py-3 flex flex-col gap-0.5">
+          <Link
+            to="/vocabulary"
+            className={`px-3 py-1.5 rounded-md text-sm font-semibold transition-colors ${
+              isVocabularyActive
+                ? 'bg-secondary text-foreground'
+                : 'text-muted-foreground hover:text-foreground hover:bg-secondary'
+            }`}
+          >
+            單詞
+          </Link>
+
           <span className={`px-3 py-1.5 text-sm font-semibold ${isGojuuonActive ? 'text-foreground' : 'text-muted-foreground'}`}>
             五十音
           </span>

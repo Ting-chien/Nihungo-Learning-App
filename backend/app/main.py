@@ -19,9 +19,9 @@ app.add_middleware(
 @app.exception_handler(AppException)
 async def app_exception_handler(request: Request, exc: AppException) -> JSONResponse:
     """Convert domain exceptions to HTTP 404/400 responses."""
-    from app.core.exceptions import QuizSessionNotFoundError
+    from app.core.exceptions import QuizSessionNotFoundError, VocabularyNotFoundError
 
-    status_code = 404 if isinstance(exc, QuizSessionNotFoundError) else 400
+    status_code = 404 if isinstance(exc, (QuizSessionNotFoundError, VocabularyNotFoundError)) else 400
     return JSONResponse(
         status_code=status_code,
         content={"success": False, "message": str(exc), "data": None},

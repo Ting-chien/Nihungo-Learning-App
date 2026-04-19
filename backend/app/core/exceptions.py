@@ -4,3 +4,7 @@ class AppException(Exception):
 
 class QuizSessionNotFoundError(AppException):
     """Raised when a requested quiz session does not exist."""
+
+
+class VocabularyNotFoundError(AppException):
+    """Raised when a requested vocabulary entry does not exist."""

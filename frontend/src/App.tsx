@@ -4,6 +4,7 @@ import HomePage from './pages/HomePage'
 import GojuuonPage from './pages/GojuuonPage'
 import QuizPage from './pages/QuizPage'
 import QuizHistoryPage from './pages/QuizHistoryPage'
+import VocabularyPage from './pages/VocabularyPage'
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
         <Route path="/gojuuon" element={<GojuuonPage />} />
         <Route path="/gojuuon/quiz" element={<QuizPage />} />
         <Route path="/gojuuon/history" element={<QuizHistoryPage />} />
+        <Route path="/vocabulary" element={<VocabularyPage />} />
       </Routes>
     </BrowserRouter>
   )
