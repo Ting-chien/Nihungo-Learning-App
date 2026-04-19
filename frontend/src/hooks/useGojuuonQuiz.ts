@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { sampleKana, type KanaEntry } from '../lib/gojuuon'
+import { sampleKanaByType, type KanaEntry, type QuizType } from '../lib/gojuuon'
 import { quizHistoryService } from '../services/quizHistoryService'
 import type { QuizAnswerCreate } from '../types/quizHistory'
 
@@ -77,11 +77,11 @@ export const useGojuuonQuiz = () => {
       })
   }, [state.status])
 
-  const start = () => {
+  const start = (quizType: QuizType = 'hiragana') => {
     setState({
       ...initialState,
       status: 'answering',
-      questions: sampleKana(QUESTION_COUNT),
+      questions: sampleKanaByType(QUESTION_COUNT, quizType),
     })
   }
 

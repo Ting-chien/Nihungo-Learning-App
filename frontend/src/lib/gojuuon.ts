@@ -43,13 +43,31 @@ export const GOJUUON = HIRAGANA
 /** Flat list of all valid hiragana entries (no placeholders) */
 export const KANA_FLAT: KanaEntry[] = HIRAGANA.flat().filter((e) => e.romaji !== '')
 
-/** Pick N unique random entries from the flat list */
-export function sampleKana(n: number): KanaEntry[] {
-  const pool = [...KANA_FLAT]
+/** Flat list of all valid katakana entries (no placeholders) */
+export const KATAKANA_FLAT: KanaEntry[] = KATAKANA.flat().filter((e) => e.romaji !== '')
+
+export type QuizType = 'hiragana' | 'katakana' | 'mixed'
+
+/** Pick N unique random entries from the pool determined by quizType */
+export function sampleKanaByType(n: number, quizType: QuizType): KanaEntry[] {
+  let pool: KanaEntry[]
+  if (quizType === 'hiragana') {
+    pool = [...KANA_FLAT]
+  } else if (quizType === 'katakana') {
+    pool = [...KATAKANA_FLAT]
+  } else {
+    // Mixed: draw from both pools combined
+    pool = [...KANA_FLAT, ...KATAKANA_FLAT]
+  }
   const result: KanaEntry[] = []
   for (let i = 0; i < n && pool.length > 0; i++) {
     const idx = Math.floor(Math.random() * pool.length)
     result.push(pool.splice(idx, 1)[0])
   }
   return result
+}
+
+/** Pick N unique random entries from the flat list */
+export function sampleKana(n: number): KanaEntry[] {
+  return sampleKanaByType(n, 'hiragana')
 }

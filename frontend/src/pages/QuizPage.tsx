@@ -1,10 +1,18 @@
-import { useRef, useEffect } from 'react'
+import { useRef, useEffect, useState } from 'react'
 import { useGojuuonQuiz } from '../hooks/useGojuuonQuiz'
+import type { QuizType } from '../lib/gojuuon'
+
+const QUIZ_TYPE_OPTIONS: { value: QuizType; label: string }[] = [
+  { value: 'hiragana', label: '平假名' },
+  { value: 'katakana', label: '片假名' },
+  { value: 'mixed', label: '混合' },
+]
 
 const QuizPage = () => {
   const { state, start, setInput, submit, next, finish, reset, QUESTION_COUNT, TIMER_SECONDS } = useGojuuonQuiz()
   const { status, questions, currentIndex, input, lastResult, timedOut, score, timeLeft } = state
   const inputRef = useRef<HTMLInputElement>(null)
+  const [selectedType, setSelectedType] = useState<QuizType>('hiragana')
 
   useEffect(() => {
     if (status === 'answering') inputRef.current?.focus()
@@ -27,9 +35,24 @@ const QuizPage = () => {
       {status === 'idle' && (
         <div className="flex flex-col items-center gap-6">
           <h2 className="text-2xl font-bold text-foreground">五十音 小測驗</h2>
+          <div className="flex rounded-md border border-border overflow-hidden">
+            {QUIZ_TYPE_OPTIONS.map(({ value, label }) => (
+              <button
+                key={value}
+                onClick={() => setSelectedType(value)}
+                className={`px-5 py-2 text-sm font-medium transition-colors ${
+                  selectedType === value
+                    ? 'bg-primary text-primary-foreground'
+                    : 'bg-background text-muted-foreground hover:text-foreground'
+                }`}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
           <p className="text-muted-foreground text-sm">共 {QUESTION_COUNT} 題，每題限時 {TIMER_SECONDS} 秒</p>
           <button
-            onClick={start}
+            onClick={() => start(selectedType)}
             className="px-8 py-3 bg-primary text-primary-foreground rounded-md text-lg font-medium hover:opacity-80 transition-opacity"
           >
             開始
